@@ -1,15 +1,12 @@
 # Creatorly React/JSX Style Guide
 협업정책 중 코딩컨벤션에 대한 프로젝트
 
-*A mostly reasonable approach to React and JSX*
+해당 내용들은 [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/blob/master/react/README.md)를 기반으로 작성되었으며 모호한 기준은 Eslint를 따르고 있다.
 
-This style guide is mostly based on the standards that are currently prevalent in JavaScript, although some conventions (i.e async/await or static class fields) may still be included or prohibited on a case-by-case basis. Currently, anything prior to stage 3 is not included nor recommended in this guide.
+## 목차
 
-## Table of Contents
-
-  1. [Basic Rules](#basic-rules)
+  1. [기본](#기본)
   1. [Class vs `React.createClass` vs stateless](#class-vs-reactcreateclass-vs-stateless)
-  1. [Mixins](#mixins)
   1. [Naming](#naming)
   1. [Declaration](#declaration)
   1. [Alignment](#alignment)
@@ -23,7 +20,7 @@ This style guide is mostly based on the standards that are currently prevalent i
   1. [Ordering](#ordering)
   1. [`isMounted`](#ismounted)
 
-## Basic Rules
+## 기본
 
   - Only include one React component per file.
     - However, multiple [Stateless, or Pure, Components](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions) are allowed per file. eslint: [`react/no-multi-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md#ignorestateless).
@@ -43,6 +40,7 @@ This style guide is mostly based on the standards that are currently prevalent i
         return <div>{this.state.hello}</div>;
       }
     });
+    
     // good
     class Listing extends React.Component {
       // ...
@@ -71,11 +69,6 @@ This style guide is mostly based on the standards that are currently prevalent i
     }
     ```
 
-## Mixins
-
-  - [Do not use mixins](https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html).
-
-  > Why? Mixins introduce implicit dependencies, cause name clashes, and cause snowballing complexity. Most use cases for mixins can be accomplished in better ways via components, higher-order components, or utility modules.
 ## Naming
 
   - **Extensions**: Use `.jsx` extension for React components. eslint: [`react/jsx-filename-extension`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md)
