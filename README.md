@@ -1,7 +1,7 @@
 # Creatorly React/JSX Style Guide
 협업정책 중 코딩컨벤션에 대한 프로젝트
 
-해당 내용들은 [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/blob/master/react/README.md)를 기반으로 작성되었으며 모호한 기준은 Eslint를 따르고 있다.
+해당 내용들은 [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/blob/master/react/README.md)를 기반으로 작성되었으며 Eslint 표준을 따르고 있다.
 
 ## 목차
 
