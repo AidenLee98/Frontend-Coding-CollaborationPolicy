@@ -1,588 +1,679 @@
-# Coding Style Convetion
+# Creatorly React/JSX Style Guide
 협업정책 중 코딩컨벤션에 대한 프로젝트
 
-## 목차
-- 목적
-- 용어정의
-- 작성패턴
-- 예외상황
-- 기타주제
-- 적용언어
-- 항목 유형
-  - 코멘트
-  - 리터럴
-  - 식별자
-  - 변수
-  - 코드 정렬
-  - 연산
-  - 조건문
-  - 배열
-  - 함수
-  - 모듈
-  - 설정파일
+*A mostly reasonable approach to React and JSX*
 
-## 목적
-서비스 신뢰, 개발 속도, 의사소통, history tracking 등에서 향상.
-협업자간 통일된 스타일 작성으로써 개발 수준 상향평준화 기대.
-## 용어정의
- - `코딩 컨벤션`: 팀원간 공유 및 인지하고 있으며 커밋에 적용돼있어야할 코딩 스타일 기준.
- - `리팩토링`: 중요도에 밀렸거나 변경된 컨벤션을 적용하지 못한 것.
- - `항목`: 컨벤션 적용 대상.
- - `기타주제`: 명확한 주제로 분류되기 전(다른 협업정책 프
- - `논리상수`: 
-   - Object.frozen 인 값
-    ``` javascript
-    Object.getOwnPropertyDescriptor(Number, 'EPSILON'); //{value: 2.220446049250313e-16, writable: false, enumerable: false}
-    ```
-   - 전역 스코프 변수 중 상수로 여겨야할 값(ex. 쉘파일, 환경변수 등 raw 데이터) !== const
-- `액션`: Conditions(if, else, else if, switch case), Loops(for, while, do while, ), Interruptions(return, break), module exports, 함수 호출
+This style guide is mostly based on the standards that are currently prevalent in JavaScript, although some conventions (i.e async/await or static class fields) may still be included or prohibited on a case-by-case basis. Currently, anything prior to stage 3 is not included nor recommended in this guide.
 
-## 작성패턴
- - `항목 추가`: 항목별 내용, 이유 및 근거와 예시가 명확할 경우만 올림. 예시는 실행가능하고 다른 컨벤션을 침범하지 않아야함.
- - `항목별 이유 및 근거`:  질문을 통해서만 받으며 답변으로 달도록함.
- 단, 모든채널(온오프라인)에서 이뤄진 질문과 답변 또한 컨벤션에 기입돼야함.
-## 예외상황
-- 컨벤션 적용은 필수지만 에러초기대응은 제외.
-단, 에러대응 완료 즉시 컨벤션누락 후속조치 필수.
-- 그 외 필요한 경우(컨벤션 사각지대 발견)
-적합한 대응 후 해당부분에 그 의도를 코멘트 후 리뷰 내용에 따라 결정.
-- 의문 미해결시 적용보류(애매한 경우 확실해질때까지 적용을 미룸)
-## 기타주제
-- 하면 좋은 것들 중 반드시 먼저 해야되는 것을 모두 수행하고 맨마지막에 수행한다.(= 절대 하면안되는 것을 염두에 두고 진행한다.)
-```
-[good case]
-Frontend: 디자인 및 기능 전체완료 후 이펙트나 css에 치중
-Backend: 레거시 전체 파악(보장) 후 관련 신규기능 추가
+## Table of Contents
 
-[bad case]
-Frontend: 디자인 및 기능 전체완료 후 이펙트나 css에 치중
-Backend: 레거시 전체 파악(보장) 전 관련 신규기능 추가
-```
-- (보류)자발적 구글링을 포함한 모든 질문은 공유되며
-질문자는 원하는 경우에만 명시한다.
-## 적용 언어
-- JavaScript
-- (보류)TypeScript
-## 항목
+  1. [Basic Rules](#basic-rules)
+  1. [Class vs `React.createClass` vs stateless](#class-vs-reactcreateclass-vs-stateless)
+  1. [Mixins](#mixins)
+  1. [Naming](#naming)
+  1. [Declaration](#declaration)
+  1. [Alignment](#alignment)
+  1. [Quotes](#quotes)
+  1. [Spacing](#spacing)
+  1. [Props](#props)
+  1. [Refs](#refs)
+  1. [Parentheses](#parentheses)
+  1. [Tags](#tags)
+  1. [Methods](#methods)
+  1. [Ordering](#ordering)
+  1. [`isMounted`](#ismounted)
 
-### 코멘트
-- 간결한 종결어미 사용하기
-``` javascript
-//코드 작성부분. //success, and good
-//코드 작성을 하려고하는 부분입니다. //success, and bad
-```
-- 인라인(in-line) 코멘트는 현재 행의 인접문을 수식한다.
-``` javascript
-password = '1234'; //위험한 패스워드 //success, and good
+## Basic Rules
 
-function(){ //say nothing //success, and good
-}
-```
-- 블록(multi-line) 코멘트는 두 개 이상의 행을 수식한다. 수식하려는 곳 최상단에 사용한다. 
-``` javascript
-/* process cycle check: success, and good */
-console.log('process 1 done.')
-console.log('process 2 done.')
-console.log('process 3 done.')
-console.log('process all done.')
-```
-- 기본적으로 한국어로써 기술하고, 코드부분만 영어를 이용하도록 지향한다.
-``` javascript
-console.log(123); //순서 //success, and good
-console.log(123); //order //success, and bad
+  - Only include one React component per file.
+    - However, multiple [Stateless, or Pure, Components](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions) are allowed per file. eslint: [`react/no-multi-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md#ignorestateless).
+  - Always use JSX syntax.
+  - Do not use `React.createElement` unless you’re initializing the app from a file that is not JSX.
+  - [`react/forbid-prop-types`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/forbid-prop-types.md) will allow `arrays` and `objects` only if it is explicitly noted what `array` and `object` contains, using `arrayOf`, `objectOf`, or `shape`.
 
-order = 123;
-console.log(order); //순서 //success, and good
-console.log(order); //order 가  //success, and bad
-```
-- 유추가능한 부분을 적지 않는다.
-``` javascript
-console.log(123); //123을 출력합니다 //success, but bad
-console.log(123); //참조 끊긴 이슈 디버깅용(임시) //success, but bad
-```
-단, 오해소지가 있는 부분은 자세히 기술한다.
-``` javascript
-custom = {
-    log: function(){ //로깅없이 무한루프라서 사용하면 안됨.
-        
-        while(1){}
+## Class vs `React.createClass` vs stateless
+
+  - If you have internal state and/or refs, prefer `class extends React.Component` over `React.createClass`. eslint: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) [`react/prefer-stateless-function`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
+
+    ```jsx
+    // bad
+    const Listing = React.createClass({
+      // ...
+      render() {
+        return <div>{this.state.hello}</div>;
+      }
+    });
+    // good
+    class Listing extends React.Component {
+      // ...
+      render() {
+        return <div>{this.state.hello}</div>;
+      }
     }
-}
-
-custom.log(123); //로깅없이 무한루프라서 사용하면 안됨.
-```
-
-### 리터럴
-- 문자열 구성은 작은 따옴표 ' 기호를 이용한다.
-``` javascript
-testText = 'test text'; //success, and good
-testText = "test text"; //success, and bad
-testText = `test text`; //success, and bad
-```
-단, 템플릿 문자열이 필요한 경우 백틱 ` 기호 이용한 구성을 허용한다.
-``` javascript
-testText = `${testText}`; //success, and bad
-```
-- URL 은 caseSensitive 하게 참조 및 지정한다.
-``` javascript
-'http://localhost' //success, and good
-'HTTP://LOCALHOST' //success, and bad
-'http://LOCALHOST' //success, and bad
-'http://Localhost' //success, and bad
-```
-### 식별자
-- 식별자 표기체계는 영문, 숫자, 언더바 _ 기호로 제한한다.
-``` javascript
-book = 'ant';  //success, and good
-책 = 'ant';  //success, but bad
-```
-
-- 식별자는 낙타 대문자(camelCase) 로 표기한다.
-``` javascript
-favoriteBookName = 'ant';  //success, and good
-favorite_book_name = 'ant';  //success, but bad
-```
-
-- 식별자는 소문자로만 구성된 단어로 시작한다.
-``` javascript
-favoriteBookName = 'ant';  //success, and good
-FavoriteBookName = 'ant';  //success, but bad
-fAVORITEBOOKNAME = 'ant';  //success, but bad
-FAVORITEBOOKNAME = 'ant';  //success, but bad
-_favoriteBookName = 'ant';  //success, but bad
-_FavoriteBookName = 'ant';  //success, but bad
-_fAVORITEBOOKNAME = 'ant';  //success, but bad
-_FAVORITEBOOKNAME = 'ant';  //success, but bad
-```
-
-- 논리상수 표기는 대문자로만 구성하고 SNAKECASE로 구분한다.
-``` bash
-favoriteBookName=ant  //success, but bad
-FavoriteBookName=ant  //success, but bad
-fAVORITEBOOKNAME=ant  //success, but bad
-FAVORITEBOOKNAME=ant  //success, but bad
-FAVORITE_BOOKNAME=ant  //success, and good
-_favoriteBookName=ant  //success, but bad
-_FavoriteBookName=ant  //success, but bad
-_fAVORITEBOOKNAME=ant  //success, but bad
-_FAVORITEBOOKNAME=ant  //success, but bad
-```
-
-- 최소한 두 글자 이상으로 구성한다.
-``` javascript
-/* case1: succes, but bad*/
-for(i=0; i<10; i++){}
-
-/* case2: succes, and good*/
-for(ii=0; ii<10; ii++){}
-```
-- 자료형을 변수명에 기입금지
-``` javascript
-arrayNumber = [1,2,3]; //success, but bad
-numbers = [1,2,3]; //success, and good
-```
-
-- 연관 의미 부여 필요(명칭으로서 result 사용금지)
-``` javascript
-result = 1+1; //success, but bad
-two = 1+1; //success, and good
-``` 
-- 불리언 변수명은 whether로 prefix.
-``` javascript
-whetherTruthy = new Boolean(1).valueOf();
-```
-- 불리언 함수명은 is로 prefix.
-``` javascript
-function isTruthy(numberOne){
-whetherTruthy = new Boolean(numberOne).valueOf();
-
-return whetherTruthy;
-}
-```
-
-- 연관된 의미를 갖도록 구성한다.
-``` javascript
-asdfds = 'text'; //success, but bad
-number = 'text'; //success, but bad
-number = 'text'; //success, but bad
-number = 1; //success, and good
-```
-- 클래스 표기는 식별자 규칙을 따르되, 첫 글자만 대문자로 한다.
-``` javascript
-class favoriteBookName {};  //success, but bad
-class FavoriteBookName {};  //success, and good
-class fAVORITEBOOKNAME {};  //success, but bad
-class FAVORITEBOOKNAME {};  //success, but bad
-class _favoriteBookName {};  //success, but bad
-class _FavoriteBookName {};  //success, but bad
-class _fAVORITEBOOKNAME {};  //success, but bad
-class _FAVORITEBOOKNAME {};  //success, but bad
-```
-
-- 변수 선언부는 수신부와 수신파생부, 초기화부와 초기화파생부, 조합부로 구분한다.
-``` javascript
-/* case1: success, and good*/
-function(parameter1, parameter2){
-/* 수신부 */
-firstParameter = parameter1; 
-secondParameter = parameter2;
-
-functionVariable = true; //초기화부
-
-/* 수신파생부 */
-unionParameter = firstParameter + secondParameter; 
-oppositeUnionParameter = !firstParameter + !secondParameter; 
-reverseOppositeUnionParameter = !unionParameter + !oppositeUnionParameter;
-
-oppositeFunctionVariable = !functionVariable; //초기화파생부
-
-firstParameter+oppositeFunctionVariable//조합부
-}
-```
-수신부, 초기화부 순으로 상단 고정이고 이외(수신파생부 및 초기화 파생부)는 context에 맞게 사용한다. 
-
-- 변수선언을 체이닝하지않는다.
-``` javascript
-const first=1, second=2; //success, but bad
-
-/* success, and good */
-const first=1; 
-const second=2;
-```
-
-- 서버 context 는 strict mode를 적용한다.
-``` javascript
-//success, but bad
-'use strict'; //success, and good
-```
-
-- 생략문법(비구조화 할당 제외)을 이용하지 않는다.
-(ex. arrow function 의 return, {}, () 이나 parameter 생략)
-``` javascript
-emptyParameter => emptyParameter //success, but bad
-(emptyParameter) => {return emptyParameter;} //success, and good
-```
-단, 기능적 차이를 갖는 경우 예외(ex. 기본 function 대신 arrow function 사용).
-
-- 명시적 블록 statement를 깨지않는다. if 등에 다 넣어야함.
-``` javascript
-if(true){ true } //success, and good
-
-if(true) true  //success, and bad
-```
-
-### 변수
-
-- 외부 코드 변수는 반드시 const 선언 후 이용하고
-불가피한 경우 파생코드 최초 참조부에 출처 코멘트를 남긴다.
-``` javascript
-/* case1 */
-method = require('path/obejct').method; //success, and bad
-obejct = require('path/obejct'); //success, and bad
-
-/* case1 */
-const method = require('path/obejct').method; //success, and bad
-const obejct = require('path/obejct'); //success, and good
-
-/* case2 */
-<javascript src = 'https://쿠팡파트너스CDN'></javascript> 
-PartnersCoupang  //succes, and bad
-PartnersCoupang  //https://쿠팡파트너스CDN //succes, and good
-```
-
-
-### 코드 정렬
-- 코드 정렬은
-VSCode default formatter 를 이용한다.
-
-`Ctrl + K + F`
-
-### 연산
-- 비교연산자(compare operator) 사용시
-해당 결과가 truthy일 때를 기준으로하여
-좌변을 작은 값 우변을 큰 값으로 둔다.
-``` javascript
-0 < 1 //true, and good
-1 > 0 //true, but bad
-``` 
-- 매우 크거나 작은 정수 혹은 제한을 두지 않는 정수가 요구되는 경우 safe integer 판별이 포함돼야 한다.
-``` javascript
-Number.isSafeInteger(Math.pow(2, 53)); //false, and good
-
-Number.isInteger(Math.pow(2, 53)) //true, and bad
-```
-- safe integer 가 아닌 정수는 사용하지 않는다.
-``` javascript
-Math.pow(2, 53) === Math.pow(2, 53)+1; //true, and bad
-```
-
-- safe integer가 아닌 수끼리 연산을 금지하며 불가피한 경우 앱실론 상수를 이용한다.
-``` javascript
-((0.1*10) + (0.2*10))/10 === 0.3 //true, but bad
-0.1 + 0.2 === 0.3 //false, and bad
-Math.abs((0.1+0.2) - 0.3) < Number.EPSILON //true, and good
-```
-- 실수와 제한을 두지 않는 정수 validation 에는 safe integer 판별이 포함돼야한다.
-
-### 조건문
-- 조건절(if, while, do while, switch 등) 에는 수행내용을 코멘트한다.
-``` javascript
-/* success, but bad */
-if(true){ }
-/* success, and good */
-if(true){ //무언가를 할 것임.
-
-}
-```
-
-- 선행조건과 연관된다면 반드시 체이닝한다.
-``` javascript
-/* success, but bad */
-if(true){'첫 항목만 정답입니다.';}
-if(true){'다음 항목만 정답입니다.'; }
-if(false){'정답이 없습니다'; }
-
-/* success, and good */
-if(true){ //첫 항목 정답 알림
-'첫 항목만 정답입니다.';
-
-} else if (true){ //다음 항목 정답 알림
-'다음 항목만 정답입니다.';
-
-} else { //항목내 정답 없음 알림
-'정답이 없습니다.';
-}
-```
-
-### 배열
-- production 의 경우 
-- 프론트의 경우 forEach 사용을 지양한다.
-
-### 함수
-- 할당없는 function 키워드로써 함수선언하지 않는다.
-``` javascript
-function doNothing(){} //success, but bad
-doNothing = function (){} //success, and good
-```
-
-- 화살표 함수는 함수부 맨 앞에서 선언 혹은 할당한다.
-``` javascript
-/* case1 */
-()=>{} //success, and good
-doNothing = function (){}
-
-/* case2 */
-doNothing = function (){}
-()=>{} //success, but bad
-```
-
-- 모든 유형별 함수 선언은 const 로써 진행한다.
-``` javascript
-const doNothing = ()=>{} //success, and good
-const doNothing = function (){} //success, and good
-
-let doNothing = ()=>{} //success, but bad
-var doNothing = function (){} //success, but bad
-```
-- 할당없는 IIFE는 사용하지 않는다.
-``` javascript
-(()=> {return true;}); //success, and bad
-alwaysTrue = (()=> {return true;}); //success, and good
-```
-- 모든 함수 호출은 세미콜론을 생략하지 않는다.
-``` javascript
-(funtion(){})(); //success, and good
-(()=>())(); //success, and good
-
-(funtion(){})() //success, and bad
-(()=>())() //success, and bad
-```
-단, 인자로서 직접이용하는 상황은 배제한다.
-``` javascript
-
-```
-- 페이지네이션은 20개를 기준으로 한다.
-
-- 함수호출시 유형이 다르다면 줄바꿈을 둔다.
-``` javascript
-/* case1: success, and good */
-console.log('일반 문구');
-console.log('일반 문구');
-
-console.warn('경고 문구');
-
-/* case2: success, and bad*/
-console.log('일반 문구');
-console.log('일반 문구');
-console.warn('경고 문구');
-``` 
-
-- 커스텀 인스턴스 생성은 반드시 class constructor 용법을 이용한 선언부 절대 function 선언부를 이용하지않도록 한다.
-``` javascript
-/* case1: success, and bad */
-function BornWrong(){}
-new BornWrong() 
-
-/* case2: success, and good */
-class BornWrong(){}
-new BornWrong() 
-```
-
-- 모든 함수 호출은 변수(호출함수와 연관된)에 할당한다.
-``` javascript
-numberOne = isOne(1);
-```
-    단, 반환 값이 없거나 동일 인자의 재사용이 잘못된 케이스(ex. main()) 는 제외한다.
-    (ex. function(){console.log('최초실행 알림 텍스트입니다.')}) //반환값이 없는 함수의 디자인가능여부는 논의대상
-
-- 커스텀 로직 대신 내장 메서드를 이용한다.
-``` javascript
-/* case1: success, and good*/
-3*3*3*3*3 //success, and bad
-Math.pow(3,5); //success, and good
-
-/* case1: success, and good */
-참가번호목록 = [1,2,3,4,5];
-순위목록 = 참가번호목록.map(function(number){
-등수 = number + '등';
-
-return 등수;
-})
-
-/* case2: success, but bad */
-참가번호목록 = [1,2,3,4,5];
-순위목록 = [];
-ii=0;
-
-for(ii; ii < 참가번호목록.length; ii++){
-참가번호 = 참가번호목록[ii];
-등수 = 참가번호 + '등';
-
-순위목록.push(등수);
-}
-```
-
-- 익명함수 선언부에는 목적을 코멘트한다
-``` javascript
-/* case1: success, and good */
-function(){ //say nothing
-
-}
-
-/* case1: success, and bad */
-() => {
-
-}
-```
-
-- 하나의 함수는 하나의 기능만 갖는다.
-``` javascript
-/* case1: success, and bad */
-function createUserAndDocument(entryOrder){
-user.entryOrder = entryOrder;
-document.entryOrder = entryOrder;
-
-userAndDocument = {user, document};
-
-return userAndDocument;
-}
-
-/* case2: success, and good */
-function createUser(entryOrder){
-user.entryOrder = entryOrder;
-
-return user;
-}
-function createDocument(entryOrder){
-document.entryOrder = entryOrder;
-
-return document;
-}
-```
-- 재귀용법을 이용하지 않으며, 불필요한경우 꼬리 재귀를 사용하고 이유를 주석으로 단다.
-
-- 포괄적인 validation이 아닌 정확한 validation을 이용한다.
-``` javascript
-numberOne = 1;
-
-if(isNumber(numberOne) || isString(numberOne)){
-
-numberOne++;
-}
-```
-
-- PR에서 console 로깅은 에러만 가능하고 빌드시점외에 운영간 발생하는 로깅은 금지한다.
-``` javascript
-/* case1: success, and good */
-//empty
-
-/* case2: success, and bad */
-setInterval(function(){
-
-console.log('연결 중...');
-}, 1000);
-
-/* case3: success, and not bad */
-db.connect(function(){
-
-    console.log('연결 됨');
-})
-```
-### 모듈
-- 외부모듈과 커스텀모듈 로드 우선순위를 구분한다.
-``` javascript
-/* case1: success, and bad */
-styles = require('./styles');
-react = require('react');
-
-/* case2: success, and bad */
-import * as styles from'./styles.js';
-import * as react from'react';
-
-/* case3: success, and good */
-react = require('react');
-
-styles = require('./styles');
-
-/* case4: success, and good */
-import * as react from 'react';
-
-import * as styles from './styles.js';
-```
-
-### 액션
-모든 컨벤션 충족 후 액션마다 줄바꿈을 둔다.
-``` javascript
-/* case1: success, and good */
-if(true){ //do nothing
-
-}
-
-if(true){//do nothing again
-
-}
-
-console.log('일반 문구');
-console.log('일반 문구');
-
-console.warn('경고 문구');
-
-/* case2: success, and bad*/
-if(true){ //do nothing
-} if(true){//do nothing again
-}
-console.log('일반 문구');
-console.log('일반 문구');
-console.warn('경고 문구');
-``` 
-
-### 설정파일
-- .env* 데이터는 외부 참조 특성을 가져야만한다.
-``` shell
-HTTP_PORT=80 #success, and good
-LOOP_DEFAULT_INDEX=0 #success, and bad
-```
-- .gitignore 제외목록(노드모듈, 환경변수, OS별 예외파일, 개발환경) 필수
-``` bash
-
-```
+    ```
+
+    And if you don’t have state or refs, prefer normal functions (not arrow functions) over classes:
+
+    ```jsx
+    // bad
+    class Listing extends React.Component {
+      render() {
+        return <div>{this.props.hello}</div>;
+      }
+    }
+    // bad (relying on function name inference is discouraged)
+    const Listing = ({ hello }) => (
+      <div>{hello}</div>
+    );
+    // good
+    function Listing({ hello }) {
+      return <div>{hello}</div>;
+    }
+    ```
+
+## Mixins
+
+  - [Do not use mixins](https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html).
+
+  > Why? Mixins introduce implicit dependencies, cause name clashes, and cause snowballing complexity. Most use cases for mixins can be accomplished in better ways via components, higher-order components, or utility modules.
+## Naming
+
+  - **Extensions**: Use `.jsx` extension for React components. eslint: [`react/jsx-filename-extension`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md)
+  - **Filename**: Use PascalCase for filenames. E.g., `ReservationCard.jsx`.
+  - **Reference Naming**: Use PascalCase for React components and camelCase for their instances. eslint: [`react/jsx-pascal-case`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md)
+
+    ```jsx
+    // bad
+    import reservationCard from './ReservationCard';
+    // good
+    import ReservationCard from './ReservationCard';
+    // bad
+    const ReservationItem = <ReservationCard />;
+    // good
+    const reservationItem = <ReservationCard />;
+    ```
+
+  - **Component Naming**: Use the filename as the component name. For example, `ReservationCard.jsx` should have a reference name of `ReservationCard`. However, for root components of a directory, use `index.jsx` as the filename and use the directory name as the component name:
+
+    ```jsx
+    // bad
+    import Footer from './Footer/Footer';
+    // bad
+    import Footer from './Footer/index';
+    // good
+    import Footer from './Footer';
+    ```
+
+  - **Higher-order Component Naming**: Use a composite of the higher-order component’s name and the passed-in component’s name as the `displayName` on the generated component. For example, the higher-order component `withFoo()`, when passed a component `Bar` should produce a component with a `displayName` of `withFoo(Bar)`.
+
+    > Why? A component’s `displayName` may be used by developer tools or in error messages, and having a value that clearly expresses this relationship helps people understand what is happening.
+    ```jsx
+    // bad
+    export default function withFoo(WrappedComponent) {
+      return function WithFoo(props) {
+        return <WrappedComponent {...props} foo />;
+      }
+    }
+    // good
+    export default function withFoo(WrappedComponent) {
+      function WithFoo(props) {
+        return <WrappedComponent {...props} foo />;
+      }
+      const wrappedComponentName = WrappedComponent.displayName
+        || WrappedComponent.name
+        || 'Component';
+      WithFoo.displayName = `withFoo(${wrappedComponentName})`;
+      return WithFoo;
+    }
+    ```
+
+  - **Props Naming**: Avoid using DOM component prop names for different purposes.
+
+    > Why? People expect props like `style` and `className` to mean one specific thing. Varying this API for a subset of your app makes the code less readable and less maintainable, and may cause bugs.
+    ```jsx
+    // bad
+    <MyComponent style="fancy" />
+    // bad
+    <MyComponent className="fancy" />
+    // good
+    <MyComponent variant="fancy" />
+    ```
+
+## Declaration
+
+  - Do not use `displayName` for naming components. Instead, name the component by reference.
+
+    ```jsx
+    // bad
+    export default React.createClass({
+      displayName: 'ReservationCard',
+      // stuff goes here
+    });
+    // good
+    export default class ReservationCard extends React.Component {
+    }
+    ```
+
+## Alignment
+
+  - Follow these alignment styles for JSX syntax. eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md) [`react/jsx-closing-tag-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-tag-location.md)
+
+    ```jsx
+    // bad
+    <Foo superLongParam="bar"
+         anotherSuperLongParam="baz" />
+    // good
+    <Foo
+      superLongParam="bar"
+      anotherSuperLongParam="baz"
+    />
+    // if props fit in one line then keep it on the same line
+    <Foo bar="bar" />
+    // children get indented normally
+    <Foo
+      superLongParam="bar"
+      anotherSuperLongParam="baz"
+    >
+      <Quux />
+    </Foo>
+    // bad
+    {showButton &&
+      <Button />
+    }
+    // bad
+    {
+      showButton &&
+        <Button />
+    }
+    // good
+    {showButton && (
+      <Button />
+    )}
+    // good
+    {showButton && <Button />}
+    // good
+    {someReallyLongConditional
+      && anotherLongConditional
+      && (
+        <Foo
+          superLongParam="bar"
+          anotherSuperLongParam="baz"
+        />
+      )
+    }
+    // good
+    {someConditional ? (
+      <Foo />
+    ) : (
+      <Foo
+        superLongParam="bar"
+        anotherSuperLongParam="baz"
+      />
+    )}
+    ```
+
+## Quotes
+
+  - Always use double quotes (`"`) for JSX attributes, but single quotes (`'`) for all other JS. eslint: [`jsx-quotes`](https://eslint.org/docs/rules/jsx-quotes)
+
+    > Why? Regular HTML attributes also typically use double quotes instead of single, so JSX attributes mirror this convention.
+    ```jsx
+    // bad
+    <Foo bar='bar' />
+    // good
+    <Foo bar="bar" />
+    // bad
+    <Foo style={{ left: "20px" }} />
+    // good
+    <Foo style={{ left: '20px' }} />
+    ```
+
+## Spacing
+
+  - Always include a single space in your self-closing tag. eslint: [`no-multi-spaces`](https://eslint.org/docs/rules/no-multi-spaces), [`react/jsx-tag-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-tag-spacing.md)
+
+    ```jsx
+    // bad
+    <Foo/>
+    // very bad
+    <Foo                 />
+    // bad
+    <Foo
+     />
+    // good
+    <Foo />
+    ```
+
+  - Do not pad JSX curly braces with spaces. eslint: [`react/jsx-curly-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-curly-spacing.md)
+
+    ```jsx
+    // bad
+    <Foo bar={ baz } />
+    // good
+    <Foo bar={baz} />
+    ```
+
+## Props
+
+  - Always use camelCase for prop names, or PascalCase if the prop value is a React component.
+
+    ```jsx
+    // bad
+    <Foo
+      UserName="hello"
+      phone_number={12345678}
+    />
+    // good
+    <Foo
+      userName="hello"
+      phoneNumber={12345678}
+      Component={SomeComponent}
+    />
+    ```
+
+  - Omit the value of the prop when it is explicitly `true`. eslint: [`react/jsx-boolean-value`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-boolean-value.md)
+
+    ```jsx
+    // bad
+    <Foo
+      hidden={true}
+    />
+    // good
+    <Foo
+      hidden
+    />
+    // good
+    <Foo hidden />
+    ```
+
+  - Always include an `alt` prop on `<img>` tags. If the image is presentational, `alt` can be an empty string or the `<img>` must have `role="presentation"`. eslint: [`jsx-a11y/alt-text`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/alt-text.md)
+
+    ```jsx
+    // bad
+    <img src="hello.jpg" />
+    // good
+    <img src="hello.jpg" alt="Me waving hello" />
+    // good
+    <img src="hello.jpg" alt="" />
+    // good
+    <img src="hello.jpg" role="presentation" />
+    ```
+
+  - Do not use words like "image", "photo", or "picture" in `<img>` `alt` props. eslint: [`jsx-a11y/img-redundant-alt`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/img-redundant-alt.md)
+
+    > Why? Screenreaders already announce `img` elements as images, so there is no need to include this information in the alt text.
+    ```jsx
+    // bad
+    <img src="hello.jpg" alt="Picture of me waving hello" />
+    // good
+    <img src="hello.jpg" alt="Me waving hello" />
+    ```
+
+  - Use only valid, non-abstract [ARIA roles](https://www.w3.org/TR/wai-aria/#usage_intro). eslint: [`jsx-a11y/aria-role`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/aria-role.md)
+
+    ```jsx
+    // bad - not an ARIA role
+    <div role="datepicker" />
+    // bad - abstract ARIA role
+    <div role="range" />
+    // good
+    <div role="button" />
+    ```
+
+  - Do not use `accessKey` on elements. eslint: [`jsx-a11y/no-access-key`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/no-access-key.md)
+
+  > Why? Inconsistencies between keyboard shortcuts and keyboard commands used by people using screenreaders and keyboards complicate accessibility.
+  ```jsx
+  // bad
+  <div accessKey="h" />
+  // good
+  <div />
+  ```
+
+  - Avoid using an array index as `key` prop, prefer a stable ID. eslint: [`react/no-array-index-key`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md)
+
+> Why? Not using a stable ID [is an anti-pattern](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318) because it can negatively impact performance and cause issues with component state.
+We don’t recommend using indexes for keys if the order of items may change.
+
+  ```jsx
+  // bad
+  {todos.map((todo, index) =>
+    <Todo
+      {...todo}
+      key={index}
+    />
+  )}
+  // good
+  {todos.map(todo => (
+    <Todo
+      {...todo}
+      key={todo.id}
+    />
+  ))}
+  ```
+
+  - Always define explicit defaultProps for all non-required props.
+
+  > Why? propTypes are a form of documentation, and providing defaultProps means the reader of your code doesn’t have to assume as much. In addition, it can mean that your code can omit certain type checks.
+  ```jsx
+  // bad
+  function SFC({ foo, bar, children }) {
+    return <div>{foo}{bar}{children}</div>;
+  }
+  SFC.propTypes = {
+    foo: PropTypes.number.isRequired,
+    bar: PropTypes.string,
+    children: PropTypes.node,
+  };
+  // good
+  function SFC({ foo, bar, children }) {
+    return <div>{foo}{bar}{children}</div>;
+  }
+  SFC.propTypes = {
+    foo: PropTypes.number.isRequired,
+    bar: PropTypes.string,
+    children: PropTypes.node,
+  };
+  SFC.defaultProps = {
+    bar: '',
+    children: null,
+  };
+  ```
+
+  - Use spread props sparingly.
+  > Why? Otherwise you’re more likely to pass unnecessary props down to components. And for React v15.6.1 and older, you could [pass invalid HTML attributes to the DOM](https://reactjs.org/blog/2017/09/08/dom-attributes-in-react-16.html).
+  Exceptions:
+
+  - HOCs that proxy down props and hoist propTypes
+
+  ```jsx
+  function HOC(WrappedComponent) {
+    return class Proxy extends React.Component {
+      Proxy.propTypes = {
+        text: PropTypes.string,
+        isLoading: PropTypes.bool
+      };
+      render() {
+        return <WrappedComponent {...this.props} />
+      }
+    }
+  }
+  ```
+
+  - Spreading objects with known, explicit props. This can be particularly useful when testing React components with Mocha’s beforeEach construct.
+
+  ```jsx
+  export default function Foo {
+    const props = {
+      text: '',
+      isPublished: false
+    }
+    return (<div {...props} />);
+  }
+  ```
+
+  Notes for use:
+  Filter out unnecessary props when possible. Also, use [prop-types-exact](https://www.npmjs.com/package/prop-types-exact) to help prevent bugs.
+
+  ```jsx
+  // bad
+  render() {
+    const { irrelevantProp, ...relevantProps } = this.props;
+    return <WrappedComponent {...this.props} />
+  }
+  // good
+  render() {
+    const { irrelevantProp, ...relevantProps } = this.props;
+    return <WrappedComponent {...relevantProps} />
+  }
+  ```
+
+## Refs
+
+  - Always use ref callbacks. eslint: [`react/no-string-refs`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-string-refs.md)
+
+    ```jsx
+    // bad
+    <Foo
+      ref="myRef"
+    />
+    // good
+    <Foo
+      ref={(ref) => { this.myRef = ref; }}
+    />
+    ```
+
+## Parentheses
+
+  - Wrap JSX tags in parentheses when they span more than one line. eslint: [`react/jsx-wrap-multilines`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-wrap-multilines.md)
+
+    ```jsx
+    // bad
+    render() {
+      return <MyComponent variant="long body" foo="bar">
+               <MyChild />
+             </MyComponent>;
+    }
+    // good
+    render() {
+      return (
+        <MyComponent variant="long body" foo="bar">
+          <MyChild />
+        </MyComponent>
+      );
+    }
+    // good, when single line
+    render() {
+      const body = <div>hello</div>;
+      return <MyComponent>{body}</MyComponent>;
+    }
+    ```
+
+## Tags
+
+  - Always self-close tags that have no children. eslint: [`react/self-closing-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md)
+
+    ```jsx
+    // bad
+    <Foo variant="stuff"></Foo>
+    // good
+    <Foo variant="stuff" />
+    ```
+
+  - If your component has multiline properties, close its tag on a new line. eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md)
+
+    ```jsx
+    // bad
+    <Foo
+      bar="bar"
+      baz="baz" />
+    // good
+    <Foo
+      bar="bar"
+      baz="baz"
+    />
+    ```
+
+## Methods
+
+  - Use arrow functions to close over local variables. It is handy when you need to pass additional data to an event handler. Although, make sure they [do not massively hurt performance](https://www.bignerdranch.com/blog/choosing-the-best-approach-for-react-event-handlers/), in particular when passed to custom components that might be PureComponents, because they will trigger a possibly needless rerender every time.
+
+    ```jsx
+    function ItemList(props) {
+      return (
+        <ul>
+          {props.items.map((item, index) => (
+            <Item
+              key={item.key}
+              onClick={(event) => { doSomethingWith(event, item.name, index); }}
+            />
+          ))}
+        </ul>
+      );
+    }
+    ```
+
+  - Bind event handlers for the render method in the constructor. eslint: [`react/jsx-no-bind`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md)
+
+    > Why? A bind call in the render path creates a brand new function on every single render. Do not use arrow functions in class fields, because it makes them [challenging to test and debug, and can negatively impact performance](https://medium.com/@charpeni/arrow-functions-in-class-properties-might-not-be-as-great-as-we-think-3b3551c440b1), and because conceptually, class fields are for data, not logic.
+    ```jsx
+    // bad
+    class extends React.Component {
+      onClickDiv() {
+        // do stuff
+      }
+      render() {
+        return <div onClick={this.onClickDiv.bind(this)} />;
+      }
+    }
+    // very bad
+    class extends React.Component {
+      onClickDiv = () => {
+        // do stuff
+      }
+      render() {
+        return <div onClick={this.onClickDiv} />
+      }
+    }
+    // good
+    class extends React.Component {
+      constructor(props) {
+        super(props);
+        this.onClickDiv = this.onClickDiv.bind(this);
+      }
+      onClickDiv() {
+        // do stuff
+      }
+      render() {
+        return <div onClick={this.onClickDiv} />;
+      }
+    }
+    ```
+
+  - Do not use underscore prefix for internal methods of a React component.
+    > Why? Underscore prefixes are sometimes used as a convention in other languages to denote privacy. But, unlike those languages, there is no native support for privacy in JavaScript, everything is public. Regardless of your intentions, adding underscore prefixes to your properties does not actually make them private, and any property (underscore-prefixed or not) should be treated as being public. See issues [#1024](https://github.com/airbnb/javascript/issues/1024), and [#490](https://github.com/airbnb/javascript/issues/490) for a more in-depth discussion.
+    ```jsx
+    // bad
+    React.createClass({
+      _onClickSubmit() {
+        // do stuff
+      },
+      // other stuff
+    });
+    // good
+    class extends React.Component {
+      onClickSubmit() {
+        // do stuff
+      }
+      // other stuff
+    }
+    ```
+
+  - Be sure to return a value in your `render` methods. eslint: [`react/require-render-return`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/require-render-return.md)
+
+    ```jsx
+    // bad
+    render() {
+      (<div />);
+    }
+    // good
+    render() {
+      return (<div />);
+    }
+    ```
+
+## Ordering
+
+  - Ordering for `class extends React.Component`:
+
+  1. optional `static` methods
+  1. `constructor`
+  1. `getChildContext`
+  1. `componentWillMount`
+  1. `componentDidMount`
+  1. `componentWillReceiveProps`
+  1. `shouldComponentUpdate`
+  1. `componentWillUpdate`
+  1. `componentDidUpdate`
+  1. `componentWillUnmount`
+  1. *event handlers starting with 'handle'* like `handleSubmit()` or `handleChangeDescription()`
+  1. *event handlers starting with 'on'* like `onClickSubmit()` or `onChangeDescription()`
+  1. *getter methods for `render`* like `getSelectReason()` or `getFooterContent()`
+  1. *optional render methods* like `renderNavigation()` or `renderProfilePicture()`
+  1. `render`
+
+  - How to define `propTypes`, `defaultProps`, `contextTypes`, etc...
+
+    ```jsx
+    import React from 'react';
+    import PropTypes from 'prop-types';
+    const propTypes = {
+      id: PropTypes.number.isRequired,
+      url: PropTypes.string.isRequired,
+      text: PropTypes.string,
+    };
+    const defaultProps = {
+      text: 'Hello World',
+    };
+    class Link extends React.Component {
+      static methodsAreOk() {
+        return true;
+      }
+      render() {
+        return <a href={this.props.url} data-id={this.props.id}>{this.props.text}</a>;
+      }
+    }
+    Link.propTypes = propTypes;
+    Link.defaultProps = defaultProps;
+    export default Link;
+    ```
+
+  - Ordering for `React.createClass`: eslint: [`react/sort-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/sort-comp.md)
+
+  1. `displayName`
+  1. `propTypes`
+  1. `contextTypes`
+  1. `childContextTypes`
+  1. `mixins`
+  1. `statics`
+  1. `defaultProps`
+  1. `getDefaultProps`
+  1. `getInitialState`
+  1. `getChildContext`
+  1. `componentWillMount`
+  1. `componentDidMount`
+  1. `componentWillReceiveProps`
+  1. `shouldComponentUpdate`
+  1. `componentWillUpdate`
+  1. `componentDidUpdate`
+  1. `componentWillUnmount`
+  1. *clickHandlers or eventHandlers* like `onClickSubmit()` or `onChangeDescription()`
+  1. *getter methods for `render`* like `getSelectReason()` or `getFooterContent()`
+  1. *optional render methods* like `renderNavigation()` or `renderProfilePicture()`
+  1. `render`
+
+## `isMounted`
+
+  - Do not use `isMounted`. eslint: [`react/no-is-mounted`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-is-mounted.md)
+
+  > Why? [`isMounted` is an anti-pattern][anti-pattern], is not available when using ES6 classes, and is on its way to being officially deprecated.
+  [anti-pattern]: https://facebook.github.io/react/blog/2015/12/16/ismounted-antipattern.html
+
+## Translation
+
+  This JSX/React style guide is also available in other languages:
+
+  - ![cn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/China.png) **Chinese (Simplified)**: [jhcccc/javascript](https://github.com/jhcccc/javascript/tree/master/react)
+  - ![tw](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Taiwan.png) **Chinese (Traditional)**: [jigsawye/javascript](https://github.com/jigsawye/javascript/tree/master/react)
+  - ![es](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Spain.png) **Español**: [agrcrobles/javascript](https://github.com/agrcrobles/javascript/tree/master/react)
+  - ![jp](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Japan.png) **Japanese**: [mitsuruog/javascript-style-guide](https://github.com/mitsuruog/javascript-style-guide/tree/master/react)
+  - ![kr](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/South-Korea.png) **Korean**: [apple77y/javascript](https://github.com/apple77y/javascript/tree/master/react)
+  - ![pl](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Poland.png) **Polish**: [pietraszekl/javascript](https://github.com/pietraszekl/javascript/tree/master/react)
+  - ![Br](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Brazil.png) **Portuguese**: [ronal2do/javascript](https://github.com/ronal2do/airbnb-react-styleguide)
+  - ![ru](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Russia.png) **Russian**: [leonidlebedev/javascript-airbnb](https://github.com/leonidlebedev/javascript-airbnb/tree/master/react)
+  - ![th](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Thailand.png) **Thai**: [lvarayut/javascript-style-guide](https://github.com/lvarayut/javascript-style-guide/tree/master/react)
+  - ![tr](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Turkey.png) **Turkish**: [alioguzhan/react-style-guide](https://github.com/alioguzhan/react-style-guide)
+  - ![ua](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Ukraine.png) **Ukrainian**: [ivanzusko/javascript](https://github.com/ivanzusko/javascript/tree/master/react)
+  - ![vn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Vietnam.png) **Vietnam**: [uetcodecamp/jsx-style-guide](https://github.com/UETCodeCamp/jsx-style-guide)
+
+**[⬆ back to top](#table-of-contents)**
