@@ -3,34 +3,34 @@
 
 해당 내용들은 [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/blob/master/react/README.md)를 기반으로 작성되었으며 Eslint 표준을 따르고 있다.
 
+
 ## 목차
 
-  1. [기본](#기본)
+  1. [기본규칙](#기본규칙)
   1. [Class vs `React.createClass` vs stateless](#class-vs-reactcreateclass-vs-stateless)
-  1. [Naming](#naming)
-  1. [Declaration](#declaration)
-  1. [Alignment](#alignment)
-  1. [Quotes](#quotes)
-  1. [Spacing](#spacing)
-  1. [Props](#props)
-  1. [Refs](#refs)
-  1. [Parentheses](#parentheses)
-  1. [Tags](#tags)
-  1. [Methods](#methods)
-  1. [Ordering](#ordering)
+  1. [명명규칙](#명명규칙)
+  1. [선언](#선언)
+  1. [정렬](#정렬)
+  1. [따옴표](#따옴표)
+  1. [띄어쓰기](#띄어쓰기)
+  1. [속성](#속성)
+  1. [참조](#참조)
+  1. [괄호](#괄호)
+  1. [태그](#태그)
+  1. [메소드](#메소드)
+  1. [순서](#순서)
   1. [`isMounted`](#ismounted)
 
-## 기본
+## 기본규칙
 
-  - Only include one React component per file.
-    - However, multiple [Stateless, or Pure, Components](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions) are allowed per file. eslint: [`react/no-multi-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md#ignorestateless).
-  - Always use JSX syntax.
-  - Do not use `React.createElement` unless you’re initializing the app from a file that is not JSX.
-  - [`react/forbid-prop-types`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/forbid-prop-types.md) will allow `arrays` and `objects` only if it is explicitly noted what `array` and `object` contains, using `arrayOf`, `objectOf`, or `shape`.
+  - 파일당 하나의 컴포넌트 파일만 포함한다.
+    - 하지만, 다수의 [Stateless, or Pure, Components](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions) 들은 파일에 존재해도 된다. eslint: [`react/no-multi-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md#ignorestateless).
+  - 항상 JSX 구문을 사용한다.
+  - 만약 JSX를 이용해 앱을 개발 중이라면 `React.createElement` 구문을 사용하지 않는다.
 
 ## Class vs `React.createClass` vs stateless
 
-  - If you have internal state and/or refs, prefer `class extends React.Component` over `React.createClass`. eslint: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) [`react/prefer-stateless-function`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
+  - 만약 소스 안에 state나 refs가 있으면, `React.createClass` 보다는 `class extends React.Component` 를 선호하라. eslint: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) [`react/prefer-stateless-function`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
 
     ```jsx
     // bad
@@ -50,7 +50,7 @@
     }
     ```
 
-    And if you don’t have state or refs, prefer normal functions (not arrow functions) over classes:
+    그리고 만약 소스 안에 state나 refs가 없다면, 일반 클래스 방식보다 일반 함수(화살표 함수 아님) 방식을 선호하라.:
 
     ```jsx
     // bad
@@ -59,36 +59,41 @@
         return <div>{this.props.hello}</div>;
       }
     }
-    // bad (relying on function name inference is discouraged)
+    
+    // bad (익명함수의 형태이므로 함수의 이름을 추론해야하기 때문에 비추천)
     const Listing = ({ hello }) => (
       <div>{hello}</div>
     );
+    
     // good
     function Listing({ hello }) {
       return <div>{hello}</div>;
     }
     ```
+    
+## 명명규칙
 
-## Naming
-
-  - **Extensions**: Use `.jsx` extension for React components. eslint: [`react/jsx-filename-extension`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md)
-  - **Filename**: Use PascalCase for filenames. E.g., `ReservationCard.jsx`.
-  - **Reference Naming**: Use PascalCase for React components and camelCase for their instances. eslint: [`react/jsx-pascal-case`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md)
+  - **확장자**: 리엑트 컴포넌트 파일에는 `.jsx` 확장자를 사용한다.
+  - **파일 이름**: 파스칼 형식의  이름을 사용한다. E.g., `ReservationCard.jsx`.
+  - **참조 값 이름**: 인스턴스는 카멜 형식으로, 리엑트 컴포넌트는 파스칼 형식의 이름을 사용한다. eslint: [`react/jsx-pascal-case`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md)
 
     ```jsx
     // bad
     import reservationCard from './ReservationCard';
+    
     // good
     import ReservationCard from './ReservationCard';
+    
     // bad
     const ReservationItem = <ReservationCard />;
+    
     // good
     const reservationItem = <ReservationCard />;
     ```
 
-  - **Component Naming**: Use the filename as the component name. For example, `ReservationCard.jsx` should have a reference name of `ReservationCard`. However, for root components of a directory, use `index.jsx` as the filename and use the directory name as the component name:
+  - **컴포넌트 이름**: 파일 이름과 동일하게 사용한다. 예를들어, `ReservationCard.jsx` 라는 파일 안에는 `ReservationCard` 라는 이름의 컴포넌트가 있어야 한다. 하지만, 폴더 내 루트 컴포넌트의 경우에는, 파일 이름을 `index.jsx` 로 작성하고, 폴더의 이름을 컴포넌트의 이름으로 작성한다.:
 
-    ```jsx
+    ``` jsx
     // bad
     import Footer from './Footer/Footer';
     // bad
@@ -97,44 +102,34 @@
     import Footer from './Footer';
     ```
 
-  - **Higher-order Component Naming**: Use a composite of the higher-order component’s name and the passed-in component’s name as the `displayName` on the generated component. For example, the higher-order component `withFoo()`, when passed a component `Bar` should produce a component with a `displayName` of `withFoo(Bar)`.
+  - **상위 컴포넌트 이름**: 상위 컴포넌트의 displayName 속성 값과 하위 컴포넌트의 displayName 속성 값에 활용하여 새롬게 만들어진 컴포넌트의 이름을 만든다. 예를들어, 상위 컴포넌트 withFoo()에서, Bar 라는 하위 컴포넌트가 인자로 넘어왔을 때, 생성되는 컴포넌트의 displayName 속성 값은 withFoo(Bar)이 된다.
 
-    > Why? A component’s `displayName` may be used by developer tools or in error messages, and having a value that clearly expresses this relationship helps people understand what is happening.
-    ```jsx
-    // bad
-    export default function withFoo(WrappedComponent) {
-      return function WithFoo(props) {
-        return <WrappedComponent {...props} foo />;
-      }
+  > 이유? 컴포넌트의 displayName 속성은 개발자 도구나 에러 메세지를 확인하기 위해 사용된다. 이 값을 확실하게 넣어줘야 사람들이 이러한 문제를 겪거나 컴포넌트 간의 관계 파악을 할 때 도움이 된다.
+  
+  ``` jsx
+  // bad
+  export default function withFoo(WrappedComponent) {
+    return function WithFoo(props) {
+      return <WrappedComponent {...props} foo />;
     }
-    // good
-    export default function withFoo(WrappedComponent) {
-      function WithFoo(props) {
-        return <WrappedComponent {...props} foo />;
-      }
-      const wrappedComponentName = WrappedComponent.displayName
-        || WrappedComponent.name
-        || 'Component';
-      WithFoo.displayName = `withFoo(${wrappedComponentName})`;
-      return WithFoo;
+  }
+  // good
+  export default function withFoo(WrappedComponent) {
+    function WithFoo(props) {
+      return <WrappedComponent {...props} foo />;
     }
-    ```
+    const wrappedComponentName = WrappedComponent.displayName
+      || WrappedComponent.name
+      || 'Component';
+    
+    WithFoo.displayName = `withFoo(${wrappedComponentName})`;
+    return WithFoo;
+  }
+  ```
 
-  - **Props Naming**: Avoid using DOM component prop names for different purposes.
+## 선언
 
-    > Why? People expect props like `style` and `className` to mean one specific thing. Varying this API for a subset of your app makes the code less readable and less maintainable, and may cause bugs.
-    ```jsx
-    // bad
-    <MyComponent style="fancy" />
-    // bad
-    <MyComponent className="fancy" />
-    // good
-    <MyComponent variant="fancy" />
-    ```
-
-## Declaration
-
-  - Do not use `displayName` for naming components. Instead, name the component by reference.
+  - 컴포넌트의 이름을 지을 때 `displayName` 속성을 사용하지 않는다. 대신에 참조 값으로 컴포넌트의 이름을 짓는다.
 
     ```jsx
     // bad
@@ -147,9 +142,9 @@
     }
     ```
 
-## Alignment
+## 정렬
 
-  - Follow these alignment styles for JSX syntax. eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md) [`react/jsx-closing-tag-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-tag-location.md)
+  - JSX 구문을 위해서는 아래의 정렬 방식을 따른다. eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md)
 
     ```jsx
     // bad
@@ -160,70 +155,37 @@
       superLongParam="bar"
       anotherSuperLongParam="baz"
     />
-    // if props fit in one line then keep it on the same line
+    // 만약 props가 하나면 같은 줄에 둔다.
     <Foo bar="bar" />
-    // children get indented normally
+    // 자식 컴포넌트는 보통 들여쓴다.
     <Foo
       superLongParam="bar"
       anotherSuperLongParam="baz"
     >
       <Quux />
     </Foo>
-    // bad
-    {showButton &&
-      <Button />
-    }
-    // bad
-    {
-      showButton &&
-        <Button />
-    }
-    // good
-    {showButton && (
-      <Button />
-    )}
-    // good
-    {showButton && <Button />}
-    // good
-    {someReallyLongConditional
-      && anotherLongConditional
-      && (
-        <Foo
-          superLongParam="bar"
-          anotherSuperLongParam="baz"
-        />
-      )
-    }
-    // good
-    {someConditional ? (
-      <Foo />
-    ) : (
-      <Foo
-        superLongParam="bar"
-        anotherSuperLongParam="baz"
-      />
-    )}
     ```
 
-## Quotes
+## 따옴표
 
-  - Always use double quotes (`"`) for JSX attributes, but single quotes (`'`) for all other JS. eslint: [`jsx-quotes`](https://eslint.org/docs/rules/jsx-quotes)
+  - JSX 속성값에는 항상 쌍따옴표 (`"`) 를 사용한다. 하지만 다른 자바스크립트에서는 홑따옴표를 사용한다. eslint: [`jsx-quotes`](http://eslint.org/docs/rules/jsx-quotes)
 
-    > Why? Regular HTML attributes also typically use double quotes instead of single, so JSX attributes mirror this convention.
-    ```jsx
-    // bad
-    <Foo bar='bar' />
-    // good
-    <Foo bar="bar" />
-    // bad
-    <Foo style={{ left: "20px" }} />
-    // good
-    <Foo style={{ left: '20px' }} />
-    ```
+  > 왜? JSX 속성은 [escaped quotes를 가질수 없다.](http://eslint.org/docs/rules/jsx-quotes), 그래서 쌍따옴표는 해당 타입에 쉽게 `"멈춤 or 그만"` 이라는 의미를 심어준다.
+  > HTML 속성들도 보통 홑따옴표 대신 쌍따옴표를 사용한다. 그래서 JSX 속성은 이러한 컨벤션을 따라간다.
+  ```jsx
+  // bad
+  <Foo bar='bar' />
+  // good
+  <Foo bar="bar" />
+  // bad
+  <Foo style={{ left: "20px" }} />
+  // good
+  <Foo style={{ left: '20px' }} />
+  ```
 
-## Spacing
+## 띄어쓰기
 
-  - Always include a single space in your self-closing tag. eslint: [`no-multi-spaces`](https://eslint.org/docs/rules/no-multi-spaces), [`react/jsx-tag-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-tag-spacing.md)
+  - 닫힘 태그에는 항상 한 칸짜리 빈 공간을 가진다.
 
     ```jsx
     // bad
@@ -237,7 +199,7 @@
     <Foo />
     ```
 
-  - Do not pad JSX curly braces with spaces. eslint: [`react/jsx-curly-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-curly-spacing.md)
+  - JSX 중괄호에 빈 공간을 덧대지 않는다. eslint: [`react/jsx-curly-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-curly-spacing.md)
 
     ```jsx
     // bad
@@ -246,9 +208,9 @@
     <Foo bar={baz} />
     ```
 
-## Props
+## 속성
 
-  - Always use camelCase for prop names, or PascalCase if the prop value is a React component.
+  - 속성의 이름은 항상 카멜케이스를 사용한다.
 
     ```jsx
     // bad
@@ -260,11 +222,10 @@
     <Foo
       userName="hello"
       phoneNumber={12345678}
-      Component={SomeComponent}
     />
     ```
 
-  - Omit the value of the prop when it is explicitly `true`. eslint: [`react/jsx-boolean-value`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-boolean-value.md)
+  - 만약 속성 값이 명확한 `true` 값이라면 생략한다. eslint: [`react/jsx-boolean-value`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-boolean-value.md)
 
     ```jsx
     // bad
@@ -275,11 +236,9 @@
     <Foo
       hidden
     />
-    // good
-    <Foo hidden />
     ```
 
-  - Always include an `alt` prop on `<img>` tags. If the image is presentational, `alt` can be an empty string or the `<img>` must have `role="presentation"`. eslint: [`jsx-a11y/alt-text`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/alt-text.md)
+  - `<img>` 태그에는 항상 `alt` 속성을 작성한다. 만약 이미지가 표현 가능하다면, `alt` 값은 빈 문자열이 될 수 있거나 `<img>`는 반드시 `role="presentation"` 속성을 가지고 있어야 한다. eslint: [`jsx-a11y/img-has-alt`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/img-has-alt.md)
 
     ```jsx
     // bad
@@ -292,17 +251,17 @@
     <img src="hello.jpg" role="presentation" />
     ```
 
-  - Do not use words like "image", "photo", or "picture" in `<img>` `alt` props. eslint: [`jsx-a11y/img-redundant-alt`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/img-redundant-alt.md)
+  - `<img>` 태그의 `alt` 속성 값으로 "image", "photo", "picture" 와 같은 단어를 사용하면 안 된다. eslint: [`jsx-a11y/img-redundant-alt`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/img-redundant-alt.md)
 
-    > Why? Screenreaders already announce `img` elements as images, so there is no need to include this information in the alt text.
-    ```jsx
-    // bad
-    <img src="hello.jpg" alt="Picture of me waving hello" />
-    // good
-    <img src="hello.jpg" alt="Me waving hello" />
-    ```
-
-  - Use only valid, non-abstract [ARIA roles](https://www.w3.org/TR/wai-aria/#usage_intro). eslint: [`jsx-a11y/aria-role`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/aria-role.md)
+  > 왜? 스크린리더는 이미 `img` 태그를 이미지로 인지하고 있기 때문에, alt 속성 값에 반복으로 해당 정보를 포함할 필요가 없다.
+  ```jsx
+  // bad
+  <img src="hello.jpg" alt="Picture of me waving hello" />
+    
+  // good
+  <img src="hello.jpg" alt="Me waving hello" />
+  ```
+  - role 속성 값으로는 검증이 가능하고, 추상적이지 않은 값을 사용하라. [ARIA roles](https://www.w3.org/TR/wai-aria/roles#role_definitions). eslint: [`jsx-a11y/aria-role`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/aria-role.md)
 
     ```jsx
     // bad - not an ARIA role
@@ -313,9 +272,9 @@
     <div role="button" />
     ```
 
-  - Do not use `accessKey` on elements. eslint: [`jsx-a11y/no-access-key`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/no-access-key.md)
+  - 엘리먼트에 `accessKey` 속성을 사용하면 안 된다. eslint: [`jsx-a11y/no-access-key`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/no-access-key.md)
 
-  > Why? Inconsistencies between keyboard shortcuts and keyboard commands used by people using screenreaders and keyboards complicate accessibility.
+  > 왜? 키보드 단축값을 사용하는 스크린 리더 유저와 일반 키보드 유저간의 일관성이 없어져서 접근성을 복잡하게 만들기 때문이다.
   ```jsx
   // bad
   <div accessKey="h" />
@@ -323,10 +282,7 @@
   <div />
   ```
 
-  - Avoid using an array index as `key` prop, prefer a stable ID. eslint: [`react/no-array-index-key`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md)
-
-> Why? Not using a stable ID [is an anti-pattern](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318) because it can negatively impact performance and cause issues with component state.
-We don’t recommend using indexes for keys if the order of items may change.
+  - 배열의 인덱스를 `key` 속성 값으로 사용하는 것을 피하고, 유니크한 ID 값을 사용하라. ([why?](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318))
 
   ```jsx
   // bad
@@ -344,136 +300,61 @@ We don’t recommend using indexes for keys if the order of items may change.
     />
   ))}
   ```
+  
+## 참조
 
-  - Always define explicit defaultProps for all non-required props.
+  - 항상 참조 콜백 함수를 사용하라. eslint: react/no-string-refs
 
-  > Why? propTypes are a form of documentation, and providing defaultProps means the reader of your code doesn’t have to assume as much. In addition, it can mean that your code can omit certain type checks.
-  ```jsx
+  ``` jsx
   // bad
-  function SFC({ foo, bar, children }) {
-    return <div>{foo}{bar}{children}</div>;
-  }
-  SFC.propTypes = {
-    foo: PropTypes.number.isRequired,
-    bar: PropTypes.string,
-    children: PropTypes.node,
-  };
+  <Foo
+    ref="myRef"
+  />
+  
   // good
-  function SFC({ foo, bar, children }) {
-    return <div>{foo}{bar}{children}</div>;
-  }
-  SFC.propTypes = {
-    foo: PropTypes.number.isRequired,
-    bar: PropTypes.string,
-    children: PropTypes.node,
-  };
-  SFC.defaultProps = {
-    bar: '',
-    children: null,
-  };
+  <Foo
+    ref={(ref) => this.myRef = ref}
+  />
   ```
 
-  - Use spread props sparingly.
-  > Why? Otherwise you’re more likely to pass unnecessary props down to components. And for React v15.6.1 and older, you could [pass invalid HTML attributes to the DOM](https://reactjs.org/blog/2017/09/08/dom-attributes-in-react-16.html).
-  Exceptions:
+## 괄호
 
-  - HOCs that proxy down props and hoist propTypes
-
-  ```jsx
-  function HOC(WrappedComponent) {
-    return class Proxy extends React.Component {
-      Proxy.propTypes = {
-        text: PropTypes.string,
-        isLoading: PropTypes.bool
-      };
-      render() {
-        return <WrappedComponent {...this.props} />
-      }
-    }
-  }
-  ```
-
-  - Spreading objects with known, explicit props. This can be particularly useful when testing React components with Mocha’s beforeEach construct.
-
-  ```jsx
-  export default function Foo {
-    const props = {
-      text: '',
-      isPublished: false
-    }
-    return (<div {...props} />);
-  }
-  ```
-
-  Notes for use:
-  Filter out unnecessary props when possible. Also, use [prop-types-exact](https://www.npmjs.com/package/prop-types-exact) to help prevent bugs.
-
-  ```jsx
-  // bad
-  render() {
-    const { irrelevantProp, ...relevantProps } = this.props;
-    return <WrappedComponent {...this.props} />
-  }
-  // good
-  render() {
-    const { irrelevantProp, ...relevantProps } = this.props;
-    return <WrappedComponent {...relevantProps} />
-  }
-  ```
-
-## Refs
-
-  - Always use ref callbacks. eslint: [`react/no-string-refs`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-string-refs.md)
-
-    ```jsx
-    // bad
-    <Foo
-      ref="myRef"
-    />
-    // good
-    <Foo
-      ref={(ref) => { this.myRef = ref; }}
-    />
-    ```
-
-## Parentheses
-
-  - Wrap JSX tags in parentheses when they span more than one line. eslint: [`react/jsx-wrap-multilines`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-wrap-multilines.md)
+  - 만약 JSX 태그가 두 줄 이상으로 늘어난다면 괄호로 감싸야 한다. eslint: [`react/wrap-multilines`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/wrap-multilines.md)
 
     ```jsx
     // bad
     render() {
-      return <MyComponent variant="long body" foo="bar">
+      return <MyComponent className="long body" foo="bar">
                <MyChild />
              </MyComponent>;
     }
     // good
     render() {
       return (
-        <MyComponent variant="long body" foo="bar">
+        <MyComponent className="long body" foo="bar">
           <MyChild />
         </MyComponent>
       );
     }
-    // good, when single line
+    // good, 한 줄이라면 괜찮다.
     render() {
       const body = <div>hello</div>;
       return <MyComponent>{body}</MyComponent>;
     }
     ```
 
-## Tags
+## 태그
 
-  - Always self-close tags that have no children. eslint: [`react/self-closing-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md)
+  - 자식 컴포넌트가 없으면 항상 닫힘 태그를 사용한다. eslint: [`react/self-closing-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md)
 
     ```jsx
     // bad
-    <Foo variant="stuff"></Foo>
+    <Foo className="stuff"></Foo>
     // good
-    <Foo variant="stuff" />
+    <Foo className="stuff" />
     ```
 
-  - If your component has multiline properties, close its tag on a new line. eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md)
+  - 만약 컴포넌트가 다수의 속성을 가졌다면, 닫힘 태그는 새로운 줄에 작성한다. eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md)
 
     ```jsx
     // bad
@@ -487,9 +368,9 @@ We don’t recommend using indexes for keys if the order of items may change.
     />
     ```
 
-## Methods
+## 메소드
 
-  - Use arrow functions to close over local variables. It is handy when you need to pass additional data to an event handler. Although, make sure they [do not massively hurt performance](https://www.bignerdranch.com/blog/choosing-the-best-approach-for-react-event-handlers/), in particular when passed to custom components that might be PureComponents, because they will trigger a possibly needless rerender every time.
+  - 지역 변수를 둘러싸기 위해서는 화살표 함수를 사용해라.
 
     ```jsx
     function ItemList(props) {
@@ -498,7 +379,7 @@ We don’t recommend using indexes for keys if the order of items may change.
           {props.items.map((item, index) => (
             <Item
               key={item.key}
-              onClick={(event) => { doSomethingWith(event, item.name, index); }}
+              onClick={() => doSomethingWith(item.name, index)}
             />
           ))}
         </ul>
@@ -506,45 +387,36 @@ We don’t recommend using indexes for keys if the order of items may change.
     }
     ```
 
-  - Bind event handlers for the render method in the constructor. eslint: [`react/jsx-no-bind`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md)
+  - render 메소드에 사용되는 이벤트 핸들러는 생성자에 바인드 해라. eslint: [`react/jsx-no-bind`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md)
 
-    > Why? A bind call in the render path creates a brand new function on every single render. Do not use arrow functions in class fields, because it makes them [challenging to test and debug, and can negatively impact performance](https://medium.com/@charpeni/arrow-functions-in-class-properties-might-not-be-as-great-as-we-think-3b3551c440b1), and because conceptually, class fields are for data, not logic.
-    ```jsx
-    // bad
-    class extends React.Component {
-      onClickDiv() {
-        // do stuff
-      }
-      render() {
-        return <div onClick={this.onClickDiv.bind(this)} />;
-      }
+  > 왜? render 메소드 내에서 bind를 사용하게게 될 경우에는 새로운 렌더링마다 새로운 함수가 생성되기 때문이다.
+  ```jsx
+  // bad
+  class extends React.Component {
+    onClickDiv() {
+      // do stuff
     }
-    // very bad
-    class extends React.Component {
-      onClickDiv = () => {
-        // do stuff
-      }
-      render() {
-        return <div onClick={this.onClickDiv} />
-      }
+    render() {
+      return <div onClick={this.onClickDiv.bind(this)} />
     }
-    // good
-    class extends React.Component {
-      constructor(props) {
-        super(props);
-        this.onClickDiv = this.onClickDiv.bind(this);
-      }
-      onClickDiv() {
-        // do stuff
-      }
-      render() {
-        return <div onClick={this.onClickDiv} />;
-      }
+  }
+  // good
+  class extends React.Component {
+    constructor(props) {
+      super(props);
+      
+      this.onClickDiv = this.onClickDiv.bind(this);
     }
-    ```
+    onClickDiv() {
+      // do stuff
+    }
+    render() {
+      return <div onClick={this.onClickDiv} />
+    }
+  }
+  ```
+  - 리엑트 컴포넌트의 내부 메소드를 위해 언더바 문자를 사용하면 안 된다.
 
-  - Do not use underscore prefix for internal methods of a React component.
-    > Why? Underscore prefixes are sometimes used as a convention in other languages to denote privacy. But, unlike those languages, there is no native support for privacy in JavaScript, everything is public. Regardless of your intentions, adding underscore prefixes to your properties does not actually make them private, and any property (underscore-prefixed or not) should be treated as being public. See issues [#1024](https://github.com/airbnb/javascript/issues/1024), and [#490](https://github.com/airbnb/javascript/issues/490) for a more in-depth discussion.
     ```jsx
     // bad
     React.createClass({
@@ -562,7 +434,7 @@ We don’t recommend using indexes for keys if the order of items may change.
     }
     ```
 
-  - Be sure to return a value in your `render` methods. eslint: [`react/require-render-return`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/require-render-return.md)
+  - `render` 메소드에서는 값을 리턴해야 한다. eslint: [`require-render-return`](https://github.com/yannickcr/eslint-plugin-react/pull/502)
 
     ```jsx
     // bad
@@ -575,11 +447,11 @@ We don’t recommend using indexes for keys if the order of items may change.
     }
     ```
 
-## Ordering
+## 순서
 
-  - Ordering for `class extends React.Component`:
+  - `class extends React.Component` 를 위한 순서:
 
-  1. optional `static` methods
+  1. 선택적인 `static` 메소드
   1. `constructor`
   1. `getChildContext`
   1. `componentWillMount`
@@ -589,17 +461,15 @@ We don’t recommend using indexes for keys if the order of items may change.
   1. `componentWillUpdate`
   1. `componentDidUpdate`
   1. `componentWillUnmount`
-  1. *event handlers starting with 'handle'* like `handleSubmit()` or `handleChangeDescription()`
-  1. *event handlers starting with 'on'* like `onClickSubmit()` or `onChangeDescription()`
-  1. *getter methods for `render`* like `getSelectReason()` or `getFooterContent()`
-  1. *optional render methods* like `renderNavigation()` or `renderProfilePicture()`
+  1. *클릭 핸들러나 이벤트 핸들러* like `onClickSubmit()` or `onChangeDescription()`
+  1. *`render`를 위한 게터 메소드* like `getSelectReason()` or `getFooterContent()`
+  1. *선택적인 렌더 메소드* like `renderNavigation()` or `renderProfilePicture()`
   1. `render`
 
-  - How to define `propTypes`, `defaultProps`, `contextTypes`, etc...
+  - `propTypes`, `defaultProps`, `contextTypes`, etc... 를 정의하는 방법
 
     ```jsx
-    import React from 'react';
-    import PropTypes from 'prop-types';
+    import React, { PropTypes } from 'react';
     const propTypes = {
       id: PropTypes.number.isRequired,
       url: PropTypes.string.isRequired,
@@ -613,7 +483,7 @@ We don’t recommend using indexes for keys if the order of items may change.
         return true;
       }
       render() {
-        return <a href={this.props.url} data-id={this.props.id}>{this.props.text}</a>;
+        return <a href={this.props.url} data-id={this.props.id}>{this.props.text}</a>
       }
     }
     Link.propTypes = propTypes;
@@ -621,7 +491,7 @@ We don’t recommend using indexes for keys if the order of items may change.
     export default Link;
     ```
 
-  - Ordering for `React.createClass`: eslint: [`react/sort-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/sort-comp.md)
+  - `React.createClass` 를 위한 순서: eslint: [`react/sort-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/sort-comp.md)
 
   1. `displayName`
   1. `propTypes`
@@ -640,33 +510,24 @@ We don’t recommend using indexes for keys if the order of items may change.
   1. `componentWillUpdate`
   1. `componentDidUpdate`
   1. `componentWillUnmount`
-  1. *clickHandlers or eventHandlers* like `onClickSubmit()` or `onChangeDescription()`
-  1. *getter methods for `render`* like `getSelectReason()` or `getFooterContent()`
-  1. *optional render methods* like `renderNavigation()` or `renderProfilePicture()`
+  1. *클릭 핸들러나 이벤트 핸들러* 예시. `onClickSubmit()` 혹은 `onChangeDescription()`
+  1. *`render`를 위한 게터 메소드* 예시. `getSelectReason()` 혹은 `getFooterContent()`
+  1. *선택적인 렌더 메소드* 예시. `renderNavigation()` 혹은 `renderProfilePicture()`
   1. `render`
 
 ## `isMounted`
 
-  - Do not use `isMounted`. eslint: [`react/no-is-mounted`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-is-mounted.md)
+  - `isMounted` 를 사용하면 안 된다. eslint: [`react/no-is-mounted`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-is-mounted.md)
 
-  > Why? [`isMounted` is an anti-pattern][anti-pattern], is not available when using ES6 classes, and is on its way to being officially deprecated.
+  > 왜? `isMounted` 은 [안티 패턴이고,][anti-pattern] ES6 클래스 문법에 적용할 수 없을 뿐더러, 공식적으로 사라지게 될 예정이다.
   [anti-pattern]: https://facebook.github.io/react/blog/2015/12/16/ismounted-antipattern.html
 
-## Translation
+## 번역
 
-  This JSX/React style guide is also available in other languages:
+  JSX/React 스타일 가이드는 다른 언어로도 볼 수 있다.:
 
-  - ![cn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/China.png) **Chinese (Simplified)**: [jhcccc/javascript](https://github.com/jhcccc/javascript/tree/master/react)
-  - ![tw](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Taiwan.png) **Chinese (Traditional)**: [jigsawye/javascript](https://github.com/jigsawye/javascript/tree/master/react)
-  - ![es](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Spain.png) **Español**: [agrcrobles/javascript](https://github.com/agrcrobles/javascript/tree/master/react)
-  - ![jp](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Japan.png) **Japanese**: [mitsuruog/javascript-style-guide](https://github.com/mitsuruog/javascript-style-guide/tree/master/react)
-  - ![kr](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/South-Korea.png) **Korean**: [apple77y/javascript](https://github.com/apple77y/javascript/tree/master/react)
+  - ![cn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/China.png) **Chinese (Simplified)**: [JasonBoy/javascript](https://github.com/JasonBoy/javascript/tree/master/react)
   - ![pl](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Poland.png) **Polish**: [pietraszekl/javascript](https://github.com/pietraszekl/javascript/tree/master/react)
-  - ![Br](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Brazil.png) **Portuguese**: [ronal2do/javascript](https://github.com/ronal2do/airbnb-react-styleguide)
-  - ![ru](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Russia.png) **Russian**: [leonidlebedev/javascript-airbnb](https://github.com/leonidlebedev/javascript-airbnb/tree/master/react)
-  - ![th](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Thailand.png) **Thai**: [lvarayut/javascript-style-guide](https://github.com/lvarayut/javascript-style-guide/tree/master/react)
-  - ![tr](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Turkey.png) **Turkish**: [alioguzhan/react-style-guide](https://github.com/alioguzhan/react-style-guide)
-  - ![ua](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Ukraine.png) **Ukrainian**: [ivanzusko/javascript](https://github.com/ivanzusko/javascript/tree/master/react)
-  - ![vn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Vietnam.png) **Vietnam**: [uetcodecamp/jsx-style-guide](https://github.com/UETCodeCamp/jsx-style-guide)
+  - ![kr](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/South-Korea.png) **Korean**: [apple77y/javascript](https://github.com/apple77y/javascript/tree/master/react)
 
 **[⬆ back to top](#table-of-contents)**
